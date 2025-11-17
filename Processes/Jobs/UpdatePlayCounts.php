@@ -1,14 +1,5 @@
 <?php
 
-putenv('MYSQL_HOST=loe4');
-putenv('MYSQL_USER=root');
-putenv('MYSQL_PASSWORD=youwonder.');
-putenv('AUTH_TOKEN_URI=https://auth.outlawdesigns.io/oauth2/token');
-putenv('AUTH_CLIENT_ID=cronsuite-job-LOE_UpdatePlayCounts');
-putenv('AUTH_CLIENT_SECRET=cjoSc3GA3uL8lomo-cCbyU5o_G');
-putenv('AUTH_SCOPE=openid, profile, email, roles');
-putenv('WEBACCESS_API_URI=https://webaccess.outlawdesigns.io');
-
 require_once __DIR__ . '/../../Factory.php';
 
 $models = \LOE\Model::getAll(); //why isn't this a factory method call?
