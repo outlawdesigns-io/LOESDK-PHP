@@ -136,11 +136,11 @@ class Factory{
       $className = $model->namespace . "HoldingBayScanner";
       return new $className($model);
     }
-    public static function createFsScanner($model,$msgTo = null, $authToken = null){
-      return new \LOE\FsHealthScanner($model,$msgTo,$authToken);
+    public static function createFsScanner($model,$msgTo = null,$msgApiUrl = null,$accessToken = null){
+      return new \LOE\FsHealthScanner($model, $msgTo, $msgApiUrl, $accessToken);
     }
-    public static function createDbScanner($model,$msgTo = null, $authToken = null){
-      return new \LOE\DbHealthScanner($model,$msgTo,$authToken);
+    public static function createDbScanner($model,$msgTo = null,$msgApiUrl = null,$accessToken = null){
+      return new \LOE\DbHealthScanner($model, $msgTo, $msgApiUrl, $accessToken);
     }
     public static function createHoldingBayProcessor($type,$inputObj){
         $obj = null;
@@ -181,11 +181,11 @@ class Factory{
      $model = self::createModel($table);
      return $model::search($key,$value);
    }
-   public static function updatePlayCounts($model,$username,$password){
-     return new PlayCount($model,$username,$password);
+   public static function updatePlayCounts($model,$logApiUrl,$accessToken){
+     return new PlayCount($model,$logApiUrl,$accessToken);
    }
-   public static function updatePlayHistory($model,$limitDate,$username,$password){
-     return new PlayHistory($model,$limitDate,$username,$password);
+   public static function updatePlayHistory($model,$limitDate,$logApiUrl,$accessToken){
+     return new PlayHistory($model,$limitDate,$logApiUrl,$accessToken);
    }
    public static function updateModelStorage($model){
      return new ModelStorageUpdate($model);
@@ -200,8 +200,40 @@ class Factory{
      }
      return $obj;
    }
-   public static function authenticate($username,$password){
-     return \LOE\DbHealthScanner::authenticate($username,$password);
+   public static function authenticate($authApiTokenUrl,$clientId, $secret, $scope = null, $audience = null){
+     $postData = array(
+       "grant_type" => "client_credentials",
+       "client_id" => $clientId,
+       "client_secret" => $secret,
+     );
+     if($scope !== null){
+       $postData['scope'] = $scope;
+     }
+     $postStr = http_build_query($postData);
+     if($audience !== null){
+       if(is_array($audience)){
+         foreach($audience as $aud){
+           $postStr .= "&audience=" . urlencode($aud);
+         }
+       }else{
+         $postStr .= "&audience=" . urlencode($audience);
+       }
+     }
+     $ch = curl_init();
+     curl_setopt($ch,CURLOPT_URL,$authApiTokenUrl);
+     curl_setopt($ch,CURLOPT_POST,1);
+     curl_setopt($ch,CURLOPT_POSTFIELDS,$postStr);
+     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+     $output = curl_exec($ch);
+     if(curl_errno($ch)){
+       throw new \Exception(curl_error($ch));
+     }
+     $json = json_decode($output);
+     curl_close($ch);
+     if(isset($json->error)){
+       throw new \Exception($json->error);
+     }
+     return $json;
    }
    public static function extractArchives($rootDir){
      return new \LOE\HoldingBay\ArchiveExtractor($rootDir);

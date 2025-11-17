@@ -1,7 +1,8 @@
 <?php namespace LOE;
 
 require_once __DIR__ . '/../../Factory.php';
-require_once __DIR__ . '/../../Libs/WebAccessClient/WebAccessClient.php';
+// require_once __DIR__ . '/../../Libs/WebAccessClient/WebAccessClient.php';
+require_once __DIR__ . '/../../../WebAccessClient/WebAccessClient.php';
 
 class PlayCount{
 
@@ -14,16 +15,12 @@ class PlayCount{
   protected $_model;
   protected $_modelCounts = array();
 
-  public function __construct($model,$username,$password){
+  public function __construct($model,$logApiUrl,$accessToken){
     $this->_model = $model;
     $this->processedCount = 0;
     $this->searchResultCount = 0;
-    try{
-      $this->_webClient = new \WebAccessClient(\WebAccessClient::authenticate($username,$password)->token);
-      $this->_getModels()->_updateCounts();
-    }catch(\Exception $e){
-      throw new \Exception($e->getMessage());
-    }
+    $this->_webClient = new \WebAccessClient($logApiUrl,$accessToken);
+    $this->_getModels()->_updateCounts();
   }
   protected function _getModels(){
     foreach($this->_model->fileExtensions as $extension){

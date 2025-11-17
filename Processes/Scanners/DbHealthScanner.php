@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../Factory.php';
 require_once __DIR__ . '/../../Libs/MessageClient/MessageClient.php';
 
 
-class DbHealthScanner extends \MessageClient{
+class DbHealthScanner{
 
   const MSGSUBJ = "Library of Everything Database Check";
 
@@ -17,15 +17,14 @@ class DbHealthScanner extends \MessageClient{
   protected $_recordCount;
   protected $_model;
 
-  public function __construct($model,$msgTo = null,$authToken = null){
+  public function __construct($model,$msgTo = null,$msgApiUrl = null,$accessToken = null){
     $this->_model = $model;
-    $this->_msgTo = $msgTo;
     $this->_buildObjects()->_scan();
-    if(is_null($authToken) && !is_null($msgTo)){
-      throw new \Exception(self::AUTHERR);
-    }elseif(!is_null($authToken) && !is_null($msgTo)){
+    if(!is_null($msgTo) && !is_null($msgApiUrl) && !is_null($accessToken)){
+      $this->_msgTo = $msgTo;
       try{
-        $this->msgResponse = json_decode(self::send($this->_buildMessage(),$authToken));
+        $msgClient = new \MessageClient($msgApiUrl,$accessToken);
+        $this->msgResponse = $msgClient->send($this->_buildMessage());
       }catch(\Exception $e){
         throw new \Exception($e->getMessage());
       }

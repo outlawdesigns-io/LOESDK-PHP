@@ -3,6 +3,19 @@
 require_once __DIR__ . '/../../Factory.php';
 
 $models = \LOE\Model::getAll();
+$authApi = getenv('AUTH_TOKEN_URI');
+$webAccessApi = getenv('WEBACCESS_API_URI');
+$clientId = getenv('AUTH_CLIENT_ID');
+$clientSecret = getenv('AUTH_CLIENT_SECRET');
+$scope = getenv('AUTH_SCOPE');
+$audience = $webAccessApi;
+
+try{
+  $tokenResponse = \LOE\Factory::authenticate($authApi,$clientId, $clientSecret, $scope, $audience);
+  $accessToken = $tokenResponse->access_token;
+}catch(Exception $ex){
+  echo $ex->getMessage() . "\n";
+}
 
 foreach($models as $model){
   $startTime = microtime(true);
@@ -10,7 +23,7 @@ foreach($models as $model){
   $run->modelId = $model->UID;
   $run->startTime = date("Y-m-d H:i:s");
   try{
-    $processor = \LOE\Factory::updatePlayHistory($model,'Y-m-01',getenv('OD_ACCOUNT_USER'),getenv('OD_ACCOUNT_PASS'));
+    $processor = \LOE\Factory::updatePlayHistory($model,'Y-m-01',$webAccessApi,$accessToken);
     $run->searchResultCount = count($processor->searchResults);
     $run->exceptionCount = count($processor->exceptions);
     $run->processedCount = $processor->processedCount;
