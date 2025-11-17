@@ -1,7 +1,7 @@
 <?php namespace LOE;
 
 require_once __DIR__ . '/../../Factory.php';
-// require_once __DIR__ . '/../../Libs/WebAccessClient/WebAccessClient.php';
+require_once __DIR__ . '/../../Libs/WebAccessClient/WebAccessClient.php';
 
 class PlayHistory{
 
