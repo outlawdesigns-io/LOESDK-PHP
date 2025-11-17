@@ -18,16 +18,12 @@ class PlayHistory{
   public $processedCount;
   public static $responseCodes = array(202,206,304);
 
-  public function __construct($model,$limitDate,$username,$password){
+  public function __construct($model,$limitDate,$logApiUrl,$accessToken){
     $this->_limitDate = date($limitDate);
     $this->_model = $model;
     $this->processedCount = 0;
-    try{
-      $this->_webClient = new \WebAccessClient(\WebAccessClient::authenticate($username,$password)->token);
-      $this->_updatePlayHistory();
-    }catch(\Exception $e){
-      throw new \Exception($e->getMessage());
-    }
+    $this->_webClient = new \WebAccessClient($logApiUrl,$accessToken);
+    $this->_updatePlayHistory();
   }
   protected function _buildPath($query){
     return Base::WEBROOT . "/LOE" . preg_replace(self::SPACEPATT," ",$query);

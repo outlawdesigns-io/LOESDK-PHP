@@ -1,8 +1,6 @@
 <?php namespace LOE;
 
-require_once __DIR__ . '/../../Libs/MessageClient/MessageClient.php';
-
-abstract class FsScanner extends \MessageClient{
+abstract class FsScanner{
 
   abstract protected function _interpretFile($absolutePath);
 

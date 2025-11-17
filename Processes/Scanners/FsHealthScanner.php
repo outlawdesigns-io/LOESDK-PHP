@@ -1,6 +1,7 @@
 <?php namespace LOE;
 
 require_once __DIR__ . '/FsScanner.php';
+require_once __DIR__ . '/../../Libs/MessageClient/MessageClient.php';
 require_once __DIR__ . '/../../Factory.php';
 
 class FsHealthScanner extends FsScanner{
@@ -13,16 +14,15 @@ class FsHealthScanner extends FsScanner{
   protected $_msgTo;
   protected $_model;
 
-  public function __construct($model,$msgTo = null,$authToken = null){
+  public function __construct($model,$msgTo = null,$msgApiUrl = null,$accessToken = null){
     $this->_model = $model;
     $this->_scanForever(\LOE\Base::WEBROOT . $this->_model->fsRoot)
          ->_verifyDatabase();
-    if(is_null($authToken) && !is_null($msgTo)){
-      throw new \Exception(self::AUTHERR);
-    }elseif(!is_null($authToken) && !is_null($msgTo)){
+    if(!is_null($msgTo) && !is_null($msgApiUrl) && !is_null($accessToken)){
       $this->_msgTo = $msgTo;
       try{
-        $this->msgResponse = json_decode(self::send($this->_buildMessage(),$authToken));
+        $msgClient = new \MessageClient($msgApiUrl,$accessToken);
+        $this->msgResponse = $msgClient->send($this->_buildMessage());
       }catch(\Exception $e){
         throw new \Exception($e->getMessage());
       }

@@ -2,6 +2,19 @@
 
 require_once __DIR__ . '/../../Factory.php';
 
+$authApi = getenv('AUTH_TOKEN_URI');
+$clientId = getenv('AUTH_CLIENT_ID');
+$clientSecret = getenv('AUTH_CLIENT_SECRET');
+$scope = getenv('AUTH_SCOPE');
+$msgServiceUrl = getenv('MSGSERVICE_API_URI');
+$audience = $msgServiceUrl;
+
+
+if(!$authApi || !$clientId || !$clientSecret || !$scope || !$msgServiceUrl){
+  echo "Missing Authentication Details. Ensure the presence of:\n";
+  echo "AUTH_TOKEN_URI\nAUTH_CLIENT_ID\nAUTH_CLIENT_SECRET\nAUTH_SCOPE\nMSGSERVICE_API_URI\n";
+  exit;
+}
 if(!isset($argv[1])){
   echo "Must provide message recipient\n";
   exit;
@@ -10,7 +23,8 @@ if(!isset($argv[1])){
   $models = \LOE\Model::getAll();
 }
 try{
-  $authToken = \LOE\Factory::authenticate(getenv('OD_ACCOUNT_USER'),getenv('OD_ACCOUNT_PASS'))->token;
+  $tokenResponse = \LOE\Factory::authenticate($authApi,$clientId, $clientSecret, $scope, $audience);
+  $accessToken = $tokenResponse->access_token;
 }catch(\Exception $e){
   echo $e->getMessage() . "\n";
   exit;
@@ -21,7 +35,7 @@ foreach($models as $model){
   $run->startTime = date("Y-m-d H:i:s");
   $run->modelId = $model->UID;
   try{
-    $scanner = \LOE\Factory::createDbScanner($model,$msgTo,$authToken);
+    $scanner = \LOE\Factory::createDbScanner($model,$msgTo,$msgServiceUrl,$accessToken);
   }catch(\Exception $e){
     echo $e->getMessage() . "\n";
   }

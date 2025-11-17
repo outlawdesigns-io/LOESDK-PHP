@@ -14,6 +14,7 @@ class Base extends \Record{
     const PRIMARYKEY = 'UID';
     const FILEPATT = '/^.*(?=(\/LOE))/';
     const WEBROOT = '/var/www/html';
+    // const WEBROOT = '/home/ldap/outlaw/LOE';
     const FILEUNSETERR = 'File path must be set.';
 
     public function __construct($database, $table, $primaryKey, $id)

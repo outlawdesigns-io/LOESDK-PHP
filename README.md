@@ -1,9 +1,9 @@
 
-# LOE Server
+# LOESDK-PHP
 
 ## Preamble
 
-The `LOEServer` package contains the code base for interacting with the Library of Everything database and file system. The LOE file system stores various types of files associated with parent [Models](./Docs/Models/Model.md) and the LOE database stores detailed relational information about those [Models](./Docs/Models/Model.md).
+The `LOESDK` package contains the code base for interacting with the Library of Everything database and file system. The LOE file system stores various types of files associated with parent [Models](./Docs/Models/Model.md) and the LOE database stores detailed relational information about those [Models](./Docs/Models/Model.md).
 
 ## Setup
 
