@@ -21,11 +21,14 @@ class Rating extends \LOE\Base{
   public static function countOf($key){
     return parent::countOf(self::TABLE,$key);
   }
-  public static function getAll($userId = null){
+  public static function getAll($userId = null, $limit = null, $offset = null){
     $data = array();
     $GLOBALS['db']->database(self::DB)->table(self::TABLE)->select(self::PRIMARYKEY);
     if(!is_null($userId)){
       $GLOBALS['db']->where("userId","=",$userId);
+    }
+    if(!is_null($limit) && !is_null($offset)){
+      $GLOBALS['db']->limit($limit)->offset($offset);
     }
     $results = $GLOBALS['db']->get();
     while($row = mysqli_fetch_assoc($results)){

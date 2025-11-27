@@ -177,9 +177,9 @@ class Factory{
      $model = self::createModel($table);
      return $model::browse($key);
    }
-   public static function search($table,$key,$value){
+   public static function search($table,$key,$value, $limit = null, $offset = null){
      $model = self::createModel($table);
-     return $model::search($key,$value);
+     return $model::search($key,$value,$limit,$offset);
    }
    public static function updatePlayCounts($model,$logApiUrl,$accessToken){
      return new PlayCount($model,$logApiUrl,$accessToken);

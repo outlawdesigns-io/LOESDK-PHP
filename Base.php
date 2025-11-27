@@ -92,9 +92,9 @@ class Base extends \Record{
       }
       return true;
     }
-    public static function search($key,$value){
+    public static function search($key,$value,$limit = null, $offset = null){
       $data = array();
-      $ids = parent::_search(self::DB,static::TABLE,static::PRIMARYKEY,$key,$value);
+      $ids = parent::_search(self::DB,static::TABLE,static::PRIMARYKEY,$key,$value, $limit, $offset);
       foreach($ids as $id){
           $data[] = new static($id);
       }
@@ -109,9 +109,9 @@ class Base extends \Record{
     public static function countOf($key){
       return parent::_countOf(self::DB,static::TABLE,$key);
     }
-    public static function getAll(){
+    public static function getAll($limit = null, $offset = null){
       $data = array();
-      $ids = parent::_getAll(self::DB,static::TABLE,static::PRIMARYKEY);
+      $ids = parent::_getAll(self::DB,static::TABLE,static::PRIMARYKEY, $limit, $offset);
       foreach($ids as $id){
           $data[] = new static($id);
       }
@@ -120,6 +120,14 @@ class Base extends \Record{
     public static function recent($limit){
       $data = array();
       $ids = parent::_getRecent(self::DB,static::TABLE,static::PRIMARYKEY,$limit);
+      foreach($ids as $id){
+        $data[] = new static($id);
+      }
+      return $data;
+    }
+    public static function paginate($limit,$offset){
+      $data = array();
+      $ids = parent::_paginate(self::DB,static::TABLE,static::PRIMARYKEY,$limit,$offset);
       foreach($ids as $id){
         $data[] = new static($id);
       }

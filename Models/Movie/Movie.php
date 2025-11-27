@@ -40,7 +40,7 @@ class Movie extends \LOE\Base{
         }
         return $data;
     }
-    public static function search($key,$value){
+    public static function search($key,$value,$limit = null, $offset = null){
         $data = array();
         if(strtolower($key) == "genre"){
             $keys = array('genre','genre2','genre3');
@@ -49,7 +49,7 @@ class Movie extends \LOE\Base{
             }
             return $data;
         }
-        return parent::search($key,$value);
+        return parent::search($key,$value,$limit,$offset);
     }
 
 }
